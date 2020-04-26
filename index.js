@@ -7,11 +7,11 @@ var mkdirp = require('mkdirp');
 
 var makeImgDataGetter = function (canvas) {
   return function (img) {
-    canvas.setAttribute('width', img.width)
-    canvas.setAttribute('height', img.height)
+    canvas.setAttribute('width', img.width * 1.8)
+    canvas.setAttribute('height', img.height * 1.8)
     var context = canvas.getContext("2d");
     context.drawImage(img, 0, 0);
-    return context.getImageData(0, 0, img.width, img.height);
+    return context.getImageData(0, 0, img.width * 1.8, img.height * 1.8);
   }
 }
 var canvas = document.createElement("canvas");
@@ -61,9 +61,20 @@ if (!bookid) {
 var outdir = path.resolve(args[1] || '.');
 mkdirp.sync(outdir);
 
+var pageNumber = 1;
+if (args.length >= 3) {
+  pageNumber = args[2];
+}
+
+function go_to() {
+  viewer.goToPage(pageNumber);
+  setTimeout(nextPage, 3000);
+}
+
 google.load("books", "0");
 google.setOnLoadCallback(function initialize() {
   viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
   viewer.load(bookid);
-  setTimeout(nextPage, 3000);
+  //
+  setTimeout(go_to, 3000);
 })
